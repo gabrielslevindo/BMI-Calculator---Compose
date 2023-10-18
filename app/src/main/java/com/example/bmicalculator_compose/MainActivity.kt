@@ -5,8 +5,10 @@ import DARK_BLUE
 import LIGHT_BLUE
 import WHITE
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -29,15 +32,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-
-
+import com.example.bmicalculator_compose.Logic.CalculateBMI
 
 
 class MainActivity : ComponentActivity() {
@@ -58,6 +62,9 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun BMIFirstScreen() {
 
+        val CalculateBMI = CalculateBMI()
+        val context = LocalContext.current
+
         var peso by remember {
             mutableStateOf("")
         }
@@ -65,7 +72,7 @@ class MainActivity : ComponentActivity() {
             mutableStateOf("")
         }
         var textResult by remember {
-           mutableStateOf("Peso Normal \n BMI: 17,09")
+           mutableStateOf("")
         }
 
 
@@ -77,7 +84,27 @@ class MainActivity : ComponentActivity() {
                     title = { Text("BMI CALCULATOR",
                         color = WHITE, fontWeight = FontWeight.Bold)
 
-                     }
+                     }, actions = {
+                         IconButton(onClick = {
+
+                             peso = ""
+                             altura = ""
+                             textResult = ""
+
+
+                         }) {
+
+                             Image(
+                                 imageVector = ImageVector.vectorResource(id =R.drawable.baseline_refresh_24 ) ,
+                                 contentDescription = "Refrash Icon.")
+
+
+                         }
+
+
+
+
+                    }
                 )
             }
         ) { ContentPadding ->
@@ -170,7 +197,21 @@ class MainActivity : ComponentActivity() {
                 )
 
                 Button(onClick = { 
-                    
+
+                         if (peso.isEmpty() || altura.isEmpty()){
+
+
+                           Toast.makeText(context,"Preencha todos os Campos.", Toast.LENGTH_SHORT).show()
+
+
+                         }else {
+
+                                CalculateBMI.calculateBMI(peso,altura)
+                             textResult = CalculateBMI.resultBMI()
+
+
+                         }
+
                     
                 },
                 modifier = Modifier
